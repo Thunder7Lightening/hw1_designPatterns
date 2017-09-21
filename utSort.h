@@ -19,7 +19,7 @@ std::list<Shape *> *createShapeList()
 	Shape *circle = new Circle(0, 0, 1, "circle"); // perimeter: 2 * M_PI, area: M_PI, compactness: 0.5
 	Shape *triangle = createTriangle(); // perimeter: 12, area: 6, compactness: 0.5
 
-	std::list<Shape *> *shapeList;
+	std::list<Shape *> *shapeList = new std::list<Shape *>();
 	shapeList->push_back(rectangle);
 	shapeList->push_back(circle);
 	shapeList->push_back(triangle);
