@@ -6,7 +6,7 @@ bool compactnessLess(Shape *shape1, Shape *shape2)
 {
 	double compactness1 = shape1->area() / shape1->perimeter();
 	double compactness2 = shape2->area() / shape2->perimeter();
-	return compactness1 > compactness2;
+	return compactness1 < compactness2;
 }
 
 Shape* theLargestArea(const std::list<Shape *> * shapeList){
