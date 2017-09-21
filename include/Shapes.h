@@ -25,9 +25,9 @@ class Shape {
 
 public:
 
-    std::string name = "Shape";
+    std::string name;
 
-    Shape(std::string shapeName):name(shapeName){}
+    Shape(std::string shapeName = "Shape"):name(shapeName){}
 
     std::string getShapeName(){
         return name;
