@@ -4,7 +4,9 @@
 
 bool compactnessLess(Shape *shape1, Shape *shape2)
 {
-	return (shape1->area() / shape1->perimeter()) < (shape2->area() / shape2->perimeter());
+	double compactness1 = shape1->area() / shape1->perimeter();
+	double compactness2 = shape2->area() / shape2->perimeter();
+	return compactness1 > compactness2;
 }
 
 Shape* theLargestArea(const std::list<Shape *> * shapeList){
@@ -78,5 +80,8 @@ void Sort::sortByDecreasingArea(std::list<Shape *> * shapeList)
   
 void Sort::sortByIncreasingCompactness(std::list<Shape *> * shapeList)
 {
-	std::sort(shapeList->begin(), shapeList->end(), compactnessLess);
+	std::vector<Shape *> shapes;
+	convertListToVector(shapeList, shapes);
+	std::sort(shapes.begin(), shapes.end(), compactnessLess);
+	convertVectorToList(shapes, shapeList);
 }
