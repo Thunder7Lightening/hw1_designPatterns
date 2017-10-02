@@ -8,7 +8,7 @@ else
 endif
 
 mainTerm.o: mainTerm.cpp atom.h constant.h number.h simpleObject.h utTerm.h variable.h
-	g++ -std=c++11 -c mainTerm.cpp
+	g++ -std=gnu++0x -c mainTerm.cpp
 
 clean:
 ifeq (${OS}, Windows_NT)
