@@ -1,7 +1,7 @@
 hw2: mainTerm.o
 	g++ -o hw2 mainTerm.o -lgtest -lpthread
 mainTerm.o: mainTerm.cpp atom.h constant.h number.h simpleObject.h utTerm.h variable.h
-	g++ -std=c++11 -c mainTerm.cpp
+	g++ -std=c++11 mainTerm.cpp atom.h constant.h number.h simpleObject.h utTerm.h variable.h
 
 
 # all: madRace utAtom
