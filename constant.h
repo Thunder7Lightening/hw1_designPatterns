@@ -26,6 +26,11 @@ public:
 			ret = this->value() == simpleObject->value();
 		return ret;
 	}
+	
+	bool match(SimpleObject &simpleObject)
+	{
+		return this->match(&simpleObject);
+	}
 };
 
 #endif // !CONSTANT_H

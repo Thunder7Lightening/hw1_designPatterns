@@ -17,6 +17,7 @@ public:
 	string value() const { return _value; };
 	string symbol() const { return _symbol; }
 	virtual bool match(SimpleObject *simpleObject) = 0;
+	virtual bool match(SimpleObject &simpleObject) = 0;
 };
 
 #endif // !SIMPLEOBJECT_H
