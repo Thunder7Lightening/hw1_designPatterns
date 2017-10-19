@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 #include "variable.h"
-//#include "struct.h"
+#include "struct.h"
 #include "atom.h"
 #include "number.h"
 
@@ -51,7 +51,7 @@ TEST (Variable, varY_to_varX_and_num1_to_varX)
 	ASSERT_TRUE(X.match(&number1));
 	ASSERT_EQ("1", Y.value());
 }
-  
+
 // ?- X=Y, Y=1.
 // X=1
 TEST (Variable, varY_to_varX_and_num1_to_varY)
@@ -105,7 +105,7 @@ TEST (Variable, num1_to_varZ_to_varY_to_varX)
 
 // ?- X=Y, X=Z, Z=1
 // X=1, Y=1, Z=1
-TEST (Variable, num1_to_varZ_to_varX_and_varY_to_varX) 
+TEST (Variable, num1_to_varZ_to_varX_and_varY_to_varX)
 {
 	Variable X("X");
 	Variable Y("Y");
@@ -124,9 +124,18 @@ TEST (Variable, num1_to_varZ_to_varX_and_varY_to_varX)
 // When Y matches Struct s
 // Then #symbol() of Y should return "Y"
 // And #value() of Y should return "s(X)"
-TEST (Variable, Struct1) 
+TEST (Variable, Struct1)
 {
+  Variable Y("Y");
+  Variable X("X");
 
+  Term *datas[1] = {&X};
+  vector<Term *> v(datas, datas + sizeof(datas) / sizeof(Term *));
+  Struct s(Atom("s"), v); // s(X)
+
+  ASSERT_TRUE(Y.match(s));
+  ASSERT_EQ("Y", Y.symbol());
+  ASSERT_EQ("s(X)", Y.value());
 }
 
 // Give there is a Struct s contains Variable X
@@ -135,9 +144,20 @@ TEST (Variable, Struct1)
 // And X matches Atom "teddy"
 // Then #symbol() of Y should return "Y"
 // And #value() of Y should return "s(teddy)"
-TEST (Variable, Struct2) 
+TEST (Variable, Struct2)
 {
-  
+  Atom teddy("teddy");
+  Variable Y("Y");
+  Variable X("X");
+
+  Term *datas[1] = {&X};
+  vector<Term *> v(datas, datas + sizeof(datas) / sizeof(Term *));
+  Struct s(Atom("s"), v); // s(X)
+
+  ASSERT_TRUE(Y.match(s));
+  ASSERT_TRUE(X.match(teddy));
+  ASSERT_EQ("Y", Y.symbol());
+  ASSERT_EQ("s(teddy)", Y.value());
 }
 
 #endif
