@@ -18,7 +18,7 @@ public:
 	virtual string value() { return this->symbol(); }
 
 	virtual bool match(Term *term)
-	{ 
+	{
 		bool ret = true;
 		if(Constant::isConstant(term))
 		{
@@ -29,6 +29,11 @@ public:
 			ret = term->match(this);
 		}
 		return ret;
+	}
+
+	virtual bool match(Term &term)
+	{
+		return this->match(&term);
 	}
 };
 

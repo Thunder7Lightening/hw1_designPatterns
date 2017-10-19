@@ -14,6 +14,7 @@ public:
 	virtual string symbol() const { return _symbol; }
 	virtual string value() = 0;
 	virtual bool match(Term *term) = 0;
+	virtual bool match(Term &term) = 0;
 };
 
 #endif // !SIMPLEOBJECT_H

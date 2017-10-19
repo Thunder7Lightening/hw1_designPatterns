@@ -49,7 +49,7 @@ TEST(Struct, match1)
   Struct hobby(Atom("hobby"), v);
   Struct hobby2(Atom("hobby2"), v);
 
-  EXPECT_FALSE(hobby.match(&hobby2));
+  EXPECT_FALSE(hobby.match(hobby2));
 }
 
 TEST(Struct, match2)
@@ -140,7 +140,7 @@ TEST(Struct, var_match_atom)
 	Struct s(Atom("s"), v);
 
 	Atom tom("tom");
-	
+
 	ASSERT_TRUE(X.match(&tom));
 	ASSERT_EQ("s(X)", s.symbol());
 	ASSERT_EQ("s(tom)", s.value());

@@ -13,12 +13,12 @@ using std::vector;
 
 class Variable : public SimpleObject
 {
-	Term *_instance; // ±Ä¥Îlink list¤è¦¡±µ³s¡A¦ı«DVariableªºª«¥ó¤@©w¬OÂ\¦b³Ì«á­± (ex: X > Z > Y > 1)
+	Term *_instance; // ï¿½Ä¥ï¿½link listï¿½è¦¡ï¿½ï¿½ï¿½sï¿½Aï¿½ï¿½ï¿½DVariableï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½@ï¿½wï¿½Oï¿½\ï¿½bï¿½Ì«á­± (ex: X > Z > Y > 1)
 
 	Term *instance() { return _instance; }
 
-	void instantiatedTo(Term *term) 
-	{ 
+	void instantiatedTo(Term *term)
+	{
 		Variable *lastVar = dynamic_cast<Variable *>(this->lastVariableInstance());
 		lastVar->_instance = term;
 		_instance = term;
@@ -30,10 +30,10 @@ public:
 	static bool isVariable(Term *term) { return dynamic_cast<Variable *>(term); }
 	static bool isVariable(string arg) { return arg.size() && isupper(arg[0]); }
 
-	Variable(string s) 
+	Variable(string s)
 		: SimpleObject(s), _instance(NULL){}
-	
-	virtual string value() 
+
+	virtual string value()
 	{
 		string ret = this->symbol();
 		if(this->isInstantiated())
@@ -41,7 +41,7 @@ public:
 			ret = this->instance()->value();
 			ret = (Variable::isVariable(ret)) ? this->symbol() : ret;
 		}
-		return ret; 
+		return ret;
 	}
 
 	Term *lastVariableInstance() // means this value, but in Term * form.
@@ -56,7 +56,7 @@ public:
 				ret = var->lastVariableInstance();
 			}
 		}
-		return ret; 
+		return ret;
 	}
 
 	Term *lastNonVariableInstance() // means this value, but in Term * form.
@@ -71,11 +71,11 @@ public:
 				ret = var->lastNonVariableInstance();
 			}
 		}
-		return ret; 
+		return ret;
 	}
-	
+
 	// TODO
-	virtual bool match(Term *term) 
+	virtual bool match(Term *term)
 	{
 		bool ret = true;
 
@@ -125,8 +125,13 @@ public:
 		return ret;
 	}
 
+	virtual bool match(Term &term)
+	{
+		return this->match(&term);
+	}
+
 	bool isThereNonVariableValue()
-	{ 
+	{
 		return this->value() != this->symbol();
 	}
 };

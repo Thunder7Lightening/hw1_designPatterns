@@ -22,13 +22,13 @@ public:
 		return _name;
 	}
 
-	Term *args(int index) 
+	Term *args(int index)
 	{
 		return _args[index];
 	}
 
-	virtual string symbol() const 
-	{ 
+	virtual string symbol() const
+	{
 		string ret = _name.symbol() + "(";
 		for(int i = 0; i < _args.size() - 1 ; i++)
 		{
@@ -61,6 +61,11 @@ public:
 			ret = term->match(this);
 		}
 		return ret;
+	}
+
+	virtual bool match(Term &term)
+	{
+		return this->match(&term);
 	}
 };
 
