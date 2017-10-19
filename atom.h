@@ -1,16 +1,16 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include "constant.h"
-#include "number.h"
 #include <string>
+#include "constant.h"
+
 using std::string;
 
 class Atom : public Constant
 {
-
+	
 public:
-	Atom (string s):Constant(s){}
+	Atom(string s) : Constant(s){}
 };
 
-#endif
+#endif // !ATOM_H

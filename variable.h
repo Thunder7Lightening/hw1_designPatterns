@@ -1,75 +1,134 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-#include "simpleObject.h"
-#include <typeinfo>
 #include <string>
+#include <cctype>
+#include <vector>
+#include "term.h"
+#include "simpleObject.h"
+
 using std::string;
+using std::isupper;
+using std::vector;
 
 class Variable : public SimpleObject
 {
-	bool _firstAssign;
-	Variable *_anotherVariableWithSameValue;
+	Term *_instance; // 採用link list方式接連，但非Variable的物件一定是擺在最後面 (ex: X > Z > Y > 1)
 
-	bool isVariable(SimpleObject *simpleObject)
-	{
-		return typeid(*simpleObject) == typeid(Variable);
+	Term *instance() { return _instance; }
+
+	void instantiatedTo(Term *term) 
+	{ 
+		Variable *lastVar = dynamic_cast<Variable *>(this->lastVariableInstance());
+		lastVar->_instance = term;
+		_instance = term;
 	}
 
-	void setAnotherVariableWithSameValue(Variable *anotherVariable)
-	{
-		_anotherVariableWithSameValue = anotherVariable;
-	}
-
-	bool doesExistAnotherVariableWithSameValue() const
-	{
-		return _anotherVariableWithSameValue != NULL;
-	}
+	bool isInstantiated() const { return _instance != NULL; }
 
 public:
-	Variable(string s):SimpleObject(s), _firstAssign(true), _anotherVariableWithSameValue(NULL){}
+	static bool isVariable(Term *term) { return dynamic_cast<Variable *>(term); }
+	static bool isVariable(string arg) { return arg.size() && isupper(arg[0]); }
 
-	bool match(SimpleObject *simpleObject)
+	Variable(string s) 
+		: SimpleObject(s), _instance(NULL){}
+	
+	virtual string value() 
+	{
+		string ret = this->symbol();
+		if(this->isInstantiated())
+		{
+			ret = this->instance()->value();
+			ret = (Variable::isVariable(ret)) ? this->symbol() : ret;
+		}
+		return ret; 
+	}
+
+	Term *lastVariableInstance() // means this value, but in Term * form.
+	{
+		Term *ret = this;
+		if(this->isInstantiated() && Variable::isVariable(this->instance()))
+		{
+			ret = this->instance();
+			Variable *var =  dynamic_cast<Variable *>(ret);
+			if(var)
+			{
+				ret = var->lastVariableInstance();
+			}
+		}
+		return ret; 
+	}
+
+	Term *lastNonVariableInstance() // means this value, but in Term * form.
+	{
+		Term *ret = this;
+		if(this->isInstantiated())
+		{
+			ret = this->instance();
+			Variable *var =  dynamic_cast<Variable *>(ret);
+			if(var)
+			{
+				ret = var->lastNonVariableInstance();
+			}
+		}
+		return ret; 
+	}
+	
+	// TODO
+	virtual bool match(Term *term) 
 	{
 		bool ret = true;
 
-		if(isVariable(simpleObject))
+		if(!Variable::isVariable(term)) // term is constant or struct.
 		{
-			setAnotherVariableWithSameValue(dynamic_cast<Variable *>(simpleObject));
-			_anotherVariableWithSameValue->setAnotherVariableWithSameValue(this);
-
-			// this value has changed, so this another variable has to change value too
-			if(this->value() != this->symbol())
+			if(this->isThereNonVariableValue())
 			{
-				_anotherVariableWithSameValue->setValue(this->value());
+				ret = this->value() == term->value();
 			}
-
-			// another variable's value has changed, so this has to change value too
-			if(_anotherVariableWithSameValue->value() != _anotherVariableWithSameValue->symbol())
+			else
 			{
-				this->setValue(_anotherVariableWithSameValue->value());
+				this->instantiatedTo(term);
+				ret = true;
 			}
 		}
-		else
+		else // term is var.
 		{
-			if(_firstAssign)
-				_firstAssign = false;
-			else if(this->value() != simpleObject->value())
-				ret = false;
-
-			// set value to all var.
-			this->setValue(simpleObject->value());
-			if(doesExistAnotherVariableWithSameValue())
-				_anotherVariableWithSameValue->setValue(simpleObject->value());
+			if(this->symbol() != term->symbol())
+			{
+				Variable *termVar = dynamic_cast<Variable *>(term);
+				if(this->isThereNonVariableValue() && termVar->isThereNonVariableValue())
+				{
+					ret = this->value() == termVar->value();
+				}
+				else if(this->isThereNonVariableValue())
+				{
+					termVar->instantiatedTo(this->lastNonVariableInstance());
+					ret = true;
+				}
+				else if(termVar->isThereNonVariableValue())
+				{
+					this->instantiatedTo(termVar->lastNonVariableInstance());
+					ret = true;
+				}
+				else // both dont have real value(non-var value)
+				{
+					this->instantiatedTo(termVar);
+					ret = true;
+				}
+			}
+			else
+			{
+				ret = true;
+			}
 		}
 
 		return ret;
 	}
 
-	bool match(SimpleObject &simpleObject)
-	{
-		return this->match(&simpleObject);
+	bool isThereNonVariableValue()
+	{ 
+		return this->value() != this->symbol();
 	}
 };
 
-#endif
+#endif // !VARIABLE_H

@@ -1,18 +1,29 @@
 #ifndef NUMBER_H
 #define NUMBER_H
 
-#include "constant.h"
-#include "atom.h"
-#include "variable.h"
+#include <typeinfo>
 #include <string>
+#include "constant.h"
+
 using std::string;
+using std::to_string;
 
 class Number : public Constant
 {
-	string convertValueFromIntToString(int v){ return std::to_string(v); }
+	template<typename Type>
+	static string convertValueToString(Type v)
+	{
+		string ret = to_string(v);
+		if(typeid(v) == typeid(double))
+		{
+			ret.erase (ret.find_last_not_of('0') + 1, string::npos);
+		}
+		return ret;
+	}
+
 public:
-	Number(int v):Constant(convertValueFromIntToString(v)){}
-	Number(string s):Constant(s){}
+	template<typename Type>
+	Number(Type v) : Constant(convertValueToString(v)){}
 };
 
-#endif
+#endif // !NUMBER_H

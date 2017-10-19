@@ -1,35 +1,34 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#include "simpleObject.h"
-#include "variable.h"
-#include <typeinfo>
 #include <string>
+#include "term.h"
+#include "simpleObject.h"
+
 using std::string;
 
 class Constant : public SimpleObject
 {
-	bool isVariable(SimpleObject *simpleObject)
-	{
-		return typeid(*simpleObject) == typeid(Variable);
-	}
 
 public:
-	Constant(string s):SimpleObject(s){}
+	static bool isConstant(Term *term) { return dynamic_cast<Constant *>(term); }
 
-	bool match(SimpleObject *simpleObject)
-	{
-		bool ret;
-		if(isVariable(simpleObject))
-			ret = simpleObject->match(this);
+	Constant(string s) : SimpleObject(s){}
+
+	virtual string value() { return this->symbol(); }
+
+	virtual bool match(Term *term)
+	{ 
+		bool ret = true;
+		if(Constant::isConstant(term))
+		{
+			ret = (this->value() == term->value());
+		}
 		else
-			ret = this->value() == simpleObject->value();
+		{
+			ret = term->match(this);
+		}
 		return ret;
-	}
-	
-	bool match(SimpleObject &simpleObject)
-	{
-		return this->match(&simpleObject);
 	}
 };
 

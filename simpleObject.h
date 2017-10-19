@@ -2,22 +2,18 @@
 #define SIMPLEOBJECT_H
 
 #include <string>
+#include "term.h"
+
 using std::string;
 
-class SimpleObject
+class SimpleObject : public Term
 {
-	string _value;
-	string _symbol;
-
-protected:
-	void setValue(string v) { _value = v; }
-
+	const string _symbol;
 public:
-	SimpleObject(string s):_symbol(s),_value(s){}
-	string value() const { return _value; };
-	string symbol() const { return _symbol; }
-	virtual bool match(SimpleObject *simpleObject) = 0;
-	virtual bool match(SimpleObject &simpleObject) = 0;
+	SimpleObject(string s) : _symbol(s){}
+	virtual string symbol() const { return _symbol; }
+	virtual string value() = 0;
+	virtual bool match(Term *term) = 0;
 };
 
 #endif // !SIMPLEOBJECT_H
