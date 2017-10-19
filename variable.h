@@ -39,7 +39,7 @@ public:
 		if(this->isInstantiated())
 		{
 			ret = this->instance()->value();
-			ret = (Variable::isVariable(ret)) ? this->symbol() : ret;
+			//ret = (Variable::isVariable(ret)) ? this->symbol() : ret;
 		}
 		return ret;
 	}
@@ -132,7 +132,7 @@ public:
 
 	bool isThereNonVariableValue()
 	{
-		return this->value() != this->symbol();
+		return !Variable::isVariable(this->value());
 	}
 };
 
