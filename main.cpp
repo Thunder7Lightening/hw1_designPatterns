@@ -3,11 +3,10 @@
 #include "utNumber.h"
 #include "utVariable.h"
 #include "utStruct.h"
+#include "utList.h"
 
 int main(int argc, char **argv)
 {
 	testing::InitGoogleTest(&argc, argv);
-	int ret = RUN_ALL_TESTS();
-	system("pause");
-	return ret;
+	return RUN_ALL_TESTS();
 }

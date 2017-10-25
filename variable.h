@@ -6,6 +6,7 @@
 #include <vector>
 #include "term.h"
 #include "simpleObject.h"
+#include "struct.h"
 
 using std::string;
 using std::isupper;
@@ -77,53 +78,15 @@ public:
 	// TODO
 	virtual bool match(Term *term)
 	{
-		bool ret = true;
-
-		if(!Variable::isVariable(term)) // term is constant or struct.
-		{
-			if(this->isThereNonVariableValue())
-			{
-				ret = this->value() == term->value();
-			}
-			else
-			{
-				this->instantiatedTo(term);
-				ret = true;
-			}
-		}
-		else // term is var.
-		{
-			if(this->symbol() != term->symbol())
-			{
-				Variable *termVar = dynamic_cast<Variable *>(term);
-				if(this->isThereNonVariableValue() && termVar->isThereNonVariableValue())
-				{
-					ret = this->value() == termVar->value();
-				}
-				else if(this->isThereNonVariableValue())
-				{
-					termVar->instantiatedTo(this->lastNonVariableInstance());
-					ret = true;
-				}
-				else if(termVar->isThereNonVariableValue())
-				{
-					this->instantiatedTo(termVar->lastNonVariableInstance());
-					ret = true;
-				}
-				else // both dont have real value(non-var value)
-				{
-					this->instantiatedTo(termVar);
-					ret = true;
-				}
-			}
-			else
-			{
-				ret = true;
-			}
-		}
-
-		return ret;
-	}
+    if (this == term)
+      return true;
+    if(!_instance)
+    {
+			_instance = term ;
+      return true;
+    }
+    return _instance->match(term);
+  }
 
 	virtual bool match(Term &term)
 	{
