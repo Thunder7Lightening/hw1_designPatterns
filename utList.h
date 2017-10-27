@@ -266,11 +266,15 @@ TEST (List, emptyExecptionOfHead)
   {
     l.head()->value();
   }
-  catch(exception *e)
+  catch(string *msg)
+  {
+    EXPECT_EQ("Accessing head in an empty list", *msg);
+  }
+  /*catch(exception *e)
   {
     string exceptionMessage(e->what());
     EXPECT_EQ("Accessing head in an empty list", exceptionMessage);
-  }
+  }*/
 }
 
 // Given there is a empty list
@@ -283,11 +287,15 @@ TEST (List, emptyExecptionOfTail)
   {
     l.tail()->value();
   }
-  catch(exception *e)
+  catch(string *msg)
+  {
+    EXPECT_EQ("Accessing tail in an empty list", *msg);
+  }
+  /*catch(exception *e)
   {
     string exceptionMessage(e->what());
     EXPECT_EQ("Accessing tail in an empty list", exceptionMessage);
-  }
+  }*/
 }
 
 #endif
