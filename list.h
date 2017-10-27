@@ -143,7 +143,7 @@ public:
     if(_elements.empty())
     {
       //throw new HeadException();
-      throw new string("Accessing head in an empty list");
+      throw string("Accessing head in an empty list");
     }
     else
     {
@@ -157,7 +157,7 @@ public:
     if(_elements.empty())
     {
       //throw new TailException();
-      throw new string("Accessing tail in an empty list");
+      throw string("Accessing tail in an empty list");
     }
     else
     {
