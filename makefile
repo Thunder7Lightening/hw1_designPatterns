@@ -10,7 +10,7 @@ endif
 mainScanner.o: mainScanner.cpp utScanner.h scanner.h atom.h struct.h variable.h utParser.h parser.h list.h term.h number.h
 	g++ -std=gnu++0x -c mainScanner.cpp
 # term.o: term.cpp term.h variable.h
-# 	g++ -std=c++11 -c term.cpp
+# 	g++ -std=gnu++0x -c term.cpp
 
 clean:
 ifeq (${OS}, Windows_NT)
