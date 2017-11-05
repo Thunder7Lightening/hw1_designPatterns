@@ -2,15 +2,14 @@
 #define ATOM_H
 
 #include <string>
-#include "constant.h"
-
+#include <sstream>
 using std::string;
 
-class Atom : public Constant
-{
-	
+#include "term.h"
+
+class Atom : public Term{
 public:
-	Atom(string s) : Constant(s){}
+  Atom(string s):Term(s) {}
 };
 
-#endif // !ATOM_H
+#endif

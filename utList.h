@@ -274,11 +274,6 @@ TEST (List, emptyExecptionOfHead)
   {
     EXPECT_EQ("Accessing head in an empty list", msg);
   }
-  /*catch(exception *e)
-  {
-    string exceptionMessage(e->what());
-    EXPECT_EQ("Accessing head in an empty list", exceptionMessage);
-  }*/
 }
 
 // Given there is a empty list
@@ -299,11 +294,6 @@ TEST (List, emptyExecptionOfTail)
   {
     EXPECT_EQ("Accessing tail in an empty list", msg);
   }
-  /*catch(exception *e)
-  {
-    string exceptionMessage(e->what());
-    EXPECT_EQ("Accessing tail in an empty list", exceptionMessage);
-  }*/
 }
 
 #endif
