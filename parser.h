@@ -47,7 +47,8 @@ public:
         //     term = new Struct(*atom, terms);
         //   term = new Struct(*atom, terms);
         // }
-        if(_scanner.nextToken() == '(' ) {
+        if(_scanner.currentChar() == '(' ) {
+          _scanner.nextToken(); // ignore '('
           vector<Term*> terms = getArgs();
           term = new Struct(*atom, terms);
         }
