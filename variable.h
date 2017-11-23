@@ -2,13 +2,11 @@
 #define VARIABLE_H
 
 #include <string>
-#include <typeinfo>
 #include "atom.h"
 using std::string;
 
 class Variable : public Term {
 public:
-  static bool isVariable(Term *term){ return typeid(Variable) == typeid(term); }
   Variable(string s):Term(s), _inst(0){}
   string value() const {
     if (_inst)
