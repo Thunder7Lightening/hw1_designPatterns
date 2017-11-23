@@ -8,27 +8,25 @@ using std::pair;
 #include <string>
 using std::string;
 
-#define SYMBOL_NAME string
-#define SYMBOL_TYPE int
-
-#define SYMBOL_TYPE_OR_CHAR SYMBOL_TYPE
-
-#define symbolName first
-#define symbolType second
-
-const SYMBOL_TYPE NONE = -1; // no tokenValue
+const int NONE = -1; // no tokenValue
 
 // tokens return by the scanner
-const SYMBOL_TYPE EOS = '\0';
-const SYMBOL_TYPE NUMBER = 256;
-const SYMBOL_TYPE ATOM = 257;
-const SYMBOL_TYPE ATOMSC = 258;
-const SYMBOL_TYPE VAR = 259;
+const int EOS = '\0';
+const int NUMBER = 256;
+const int ATOM = 257;
+const int ATOMSC = 258;
+const int VAR = 259;
+
+// for expressionTree's payload
+const int TERM = 260;
+const int EQUALITY = 261;
+const int COMMA = 262;
+const int SEMICOLON = 263;
 
 #include <vector>
 using std::vector;
 
-vector<pair<SYMBOL_NAME, SYMBOL_TYPE>> symtable;
+vector<pair<string, int>> symtable;
 
 bool isSpecialCh(char c) {
   return c == '+'
@@ -53,7 +51,7 @@ bool isSpecialCh(char c) {
 bool symbolExist(string s, int & val) {
   bool found = false;
   val = -1;
-  vector<pair<SYMBOL_NAME, SYMBOL_TYPE>>::iterator it = find_if(symtable.begin(), symtable.end(), [s](pair<SYMBOL_NAME, SYMBOL_TYPE> ele) {
+  vector<pair<string, int>>::iterator it = find_if(symtable.begin(), symtable.end(), [s](pair<string, int> ele) {
     return ele.first == s;
   });
 
