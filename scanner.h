@@ -3,21 +3,59 @@
 
 #include "global.h"
 
+
 #include <string>
 #include <vector>
+#include <stack>
 using std::string;
 using std::vector;
+using std::stack;
 
 class Scanner {
 public:
-  Scanner (string in=""):buffer(in), pos(0), _tokenValue(NONE){}
+  Scanner (string in=""):buffer(in), pos(0), _tokenIndex(NONE){}
   void setInput(string in) {buffer = in;}
 
-  int nextToken() {
+  bool isBufferIllegal()
+  {
+    // TODO
+    /*
+    The illegal example:
+      buffer : [1,2)
+    */
+    int countOpenBrace = 0, countCloseBrace = 0;
+    int countOpenParentheses = 0, countCloseParentheses = 0;
+
+    for(int i = 0; i < this->buffer.size(); i++)
+    {
+      switch(this->buffer[i])
+      {
+        case '[':
+          countOpenBrace++;
+          break;
+        case ']':
+          countCloseBrace++;
+          break;
+        case '(':
+          countOpenParentheses++;
+          break;
+        case ')':
+          countCloseParentheses++;
+          break;
+      }
+    }
+
+    if(countOpenBrace == countCloseBrace && countOpenParentheses == countCloseParentheses)
+      return false;
+    else
+      return true;
+  }
+
+  SYMBOL_TYPE_OR_CHAR nextToken() {
       if (skipLeadingWhiteSpace() >= buffer.length())
         return EOS;
       else if (isdigit(currentChar())) {
-        _tokenValue = extractNumber();
+        _tokenIndex = extractNumber();
         return NUMBER;
       }  else if (islower(currentChar())) {
         string s = extractAtom();
@@ -32,12 +70,12 @@ public:
         processToken<VAR>(s);
         return VAR;
       } else {
-        _tokenValue = NONE;
+        _tokenIndex = NONE;
         return extractChar();
       }
   }
 
-  int tokenValue() const {return _tokenValue;}
+  int tokenIndex() const {return _tokenIndex;}
 
   int skipLeadingWhiteSpace() {
     for (; (buffer[pos] == ' ' || buffer[pos] == '\t') && pos<buffer.length(); ++pos);
@@ -82,7 +120,7 @@ public:
 private:
   string buffer;
   int pos;
-  int _tokenValue;
+  int _tokenIndex;
 
 private:
   // case-based populating symtable and setting _tokenValue
@@ -90,10 +128,10 @@ private:
   void processToken(string const & s) {
     int val = -1;
     if (symbolExist(s,val)) {
-        _tokenValue = val;
+        _tokenIndex = val;
     } else {
-      symtable.push_back(pair<string, int>(s,TokenType));
-       _tokenValue = symtable.size()-1; // index to symtable
+      symtable.push_back(pair<SYMBOL_NAME, SYMBOL_TYPE>(s,TokenType));
+       _tokenIndex = symtable.size()-1; // index to symtable
     }
   }
 };
