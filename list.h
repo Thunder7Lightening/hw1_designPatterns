@@ -16,7 +16,7 @@ public:
   string symbol() const;
   string value() const;
   bool match(Term & term);
-  virtual Iterator * createIterator();
+  virtual Iterator<Term *> * createIterator();
 
 public:
   List (): _elements(0) {}

@@ -44,7 +44,7 @@ public:
 
   int arity() const {return _args.size();}
 
-  Iterator * createIterator();
+  Iterator<Term *> * createIterator();
 private:
   Atom _name;
   std::vector<Term *> _args;

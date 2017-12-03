@@ -18,7 +18,7 @@ TEST(iterator, first) {
   Struct s(Atom("s"), { &one, &t, &Y });
 
   // iterate
-  Iterator *itStruct = s.createIterator();
+  Iterator<Term*> *itStruct = s.createIterator();
   itStruct->first();
   ASSERT_EQ("1", itStruct->currentItem()->symbol());
   ASSERT_FALSE(itStruct->isDone());
@@ -42,7 +42,7 @@ TEST(iterator, nested_iterator) {
   Struct s(Atom("s"), { &one, &t, &Y });
 
   // find t(X,2)
-  Iterator *it = s.createIterator();
+  Iterator<Term*> *it = s.createIterator();
   it->first();
   it->next();
 
@@ -69,7 +69,7 @@ TEST(iterator, firstList) {
     List l({ &one, &t, &Y });
 
     // iterate
-    Iterator *it = l.createIterator();
+    Iterator<Term*> *it = l.createIterator();
     it->first();
     ASSERT_EQ("1", it->currentItem()->symbol());
     ASSERT_FALSE(it->isDone());
@@ -86,11 +86,11 @@ TEST(iterator, firstList) {
 TEST(iterator, NullIterator){
   Number one(1);
 
-  NullIterator nullIterator(&one);
+  NullIterator<Term *> nullIterator(&one);
   nullIterator.first();
   ASSERT_TRUE(nullIterator.isDone());
 
-  Iterator *it = one.createIterator();
+  Iterator<Term*> *it = one.createIterator();
   it->first();
   ASSERT_TRUE(it->isDone());
 }
@@ -107,7 +107,7 @@ TEST(iterator, NullIterator){
 //   Struct combo1(Atom("combo1"), { &bigMac, &coke });
 //
 //   // iterate it by BSF
-//   Iterator *it = combo1.createBFSIterator();
+//   Iterator<Term*> *it = combo1.createBFSIterator();
 //   it->first();
 //   ASSERT_TRUE("bigmac", it->currentItem());
 // }

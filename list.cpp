@@ -7,9 +7,9 @@
 #include "iterator.h"
 using std::vector;
 
-Iterator * List::createIterator()
+Iterator<Term *> * List::createIterator()
 {
-  return new ListIterator(this);
+  return new ListIterator<Term *>(this);
 }
 
 string List::symbol() const{

@@ -14,12 +14,13 @@ public:
   virtual bool isDone() const = 0;
 };
 
-class NullIterator :public Iterator{
+template<typename T>
+class NullIterator :public Iterator<T>{
 public:
   NullIterator(Term *n){}
   void first(){}
   void next(){}
-  Term * currentItem() const{
+  T currentItem() const{
       return nullptr;
   }
   bool isDone() const{
@@ -28,7 +29,8 @@ public:
 
 };
 
-class StructIterator :public Iterator {
+template<typename T>
+class StructIterator :public Iterator<T> {
 public:
   friend class Struct;
 
@@ -36,7 +38,7 @@ public:
     _index = 0;
   }
 
-  Term* currentItem() const {
+  T currentItem() const {
     return _s->args(_index);
   }
 
@@ -54,7 +56,8 @@ private:
   Struct* _s;
 };
 
-class ListIterator :public Iterator {
+template<typename T>
+class ListIterator :public Iterator<T> {
 public:
   ListIterator(List *list): _index(0), _list(list) {}
 
@@ -62,7 +65,7 @@ public:
     _index = 0;
   }
 
-  Term* currentItem() const {
+  T currentItem() const {
     return _list->args(_index);
   }
 
@@ -84,20 +87,22 @@ private:
 */
 
 // TODO
-class DFSIterator :public Iterator {
+template<typename T>
+class DFSIterator :public Iterator<T> {
 public:
   virtual void first(){}
   virtual void next(){}
-  virtual Term* currentItem(){}
+  virtual T currentItem(){}
   virtual bool isDone(){}
 };
 
 // TODO
-class BFSIterator :public Iterator {
+template<typename T>
+class BFSIterator :public Iterator<T> {
 public:
   virtual void first(){}
   virtual void next(){}
-  virtual Term* currentItem(){}
+  virtual T currentItem(){}
   virtual bool isDone(){}
 };
 
