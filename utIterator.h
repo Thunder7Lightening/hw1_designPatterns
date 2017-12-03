@@ -110,6 +110,12 @@ TEST(iterator, NullIterator){
 //   Iterator<Term*> *it = combo1.createBFSIterator();
 //   it->first();
 //   ASSERT_TRUE("bigmac", it->currentItem());
+//   it->next();
+//   ASSERT_TRUE("coke", it->currentItem());
+//   it->next();
+//   ASSERT_TRUE("bun", it->currentItem());
+//   it->next();
+//   ASSERT_TRUE("beefPatty", it->currentItem());
 // }
 
 #endif
