@@ -7,7 +7,8 @@
 
 using std::string;
 
-class Struct: public Term {
+class Struct: public Term
+{
 public:
   Struct(Atom name, std::vector<Term *> args): _name(name) {
     _args = args;
@@ -20,6 +21,7 @@ public:
   Atom & name() {
     return _name;
   }
+
   string symbol() const {
     if(_args.empty())
     return  _name.symbol() + "()";
@@ -30,6 +32,7 @@ public:
     ret  += (*it)->symbol()+")";
     return ret;
   }
+
   string value() const {
     string ret = _name.symbol() + "(";
     std::vector<Term *>::const_iterator it = _args.begin();
@@ -38,9 +41,11 @@ public:
     ret  += (*it)->value()+")";
     return ret;
   }
+
   int arity() const {return _args.size();}
-// private:
-public:
+
+  Iterator * createIterator();
+private:
   Atom _name;
   std::vector<Term *> _args;
 };

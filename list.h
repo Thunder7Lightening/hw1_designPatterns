@@ -10,16 +10,24 @@ using std::vector;
 
 class Variable ;
 
-class List : public Term {
+class List : public Term
+{
 public:
-  string symbol() const ;
-  string value() const ;
-  bool match(Term & term) ;
+  string symbol() const;
+  string value() const;
+  bool match(Term & term);
+  virtual Iterator * createIterator();
+
 public:
   List (): _elements(0) {}
   List (vector<Term *> const & elements):_elements(elements){}
   Term * head() const;
   List * tail() const;
+  Term * args(int index) {
+    return _elements[index];
+  }
+  int arity() const {return _elements.size();}
+
 private:
   vector<Term *> _elements;
 };

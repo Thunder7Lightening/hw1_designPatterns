@@ -4,7 +4,13 @@
 #include <iostream>
 #include <string>
 #include "list.h"
+#include "iterator.h"
 using std::vector;
+
+Iterator * List::createIterator()
+{
+  return new ListIterator(this);
+}
 
 string List::symbol() const{
     string ret ;
