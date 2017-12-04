@@ -90,7 +90,7 @@ private:
 template<typename T>
 class DFSIterator :public Iterator<T> {
 public:
-  DFSIterator(){}
+  DFSIterator(Term *term):testTerm(term){}
 
   virtual void first(){}
   virtual void next(){}
@@ -98,14 +98,14 @@ public:
   virtual bool isDone() const {}
 
 private:
-
+  Term *testTerm;
 };
 
 // TODO
 template<typename T>
 class BFSIterator :public Iterator<T> {
 public:
-  BFSIterator(){}
+  BFSIterator(Term *term):testTerm(term){}
 
   virtual void first(){}
   virtual void next(){}
@@ -113,7 +113,7 @@ public:
   virtual bool isDone() const {}
 
 private:
-
+  Term *testTerm;
 };
 
 #endif

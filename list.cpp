@@ -14,12 +14,12 @@ Iterator<Term *> * List::createIterator()
 
 Iterator<Term *> * List::createBFSIterator()
 {
-  return new BFSIterator<Term *>();
+  return new BFSIterator<Term *>(this);
 }
 
 Iterator<Term *> * List::createDFSIterator()
 {
-  return new DFSIterator<Term *>();
+  return new DFSIterator<Term *>(this);
 }
 
 
