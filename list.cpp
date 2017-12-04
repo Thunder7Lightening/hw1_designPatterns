@@ -12,6 +12,17 @@ Iterator<Term *> * List::createIterator()
   return new ListIterator<Term *>(this);
 }
 
+Iterator<Term *> * List::createBFSIterator()
+{
+  return new BFSIterator<Term *>();
+}
+
+Iterator<Term *> * List::createDFSIterator()
+{
+  return new DFSIterator<Term *>();
+}
+
+
 string List::symbol() const{
     string ret ;
     if(_elements.size()==0 ){

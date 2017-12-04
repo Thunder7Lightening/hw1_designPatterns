@@ -17,6 +17,8 @@ public:
   string value() const;
   bool match(Term & term);
   virtual Iterator<Term *> * createIterator();
+  Iterator<Term *> * createBFSIterator();
+  Iterator<Term *> * createDFSIterator();
 
 public:
   List (): _elements(0) {}

@@ -90,20 +90,30 @@ private:
 template<typename T>
 class DFSIterator :public Iterator<T> {
 public:
+  DFSIterator(){}
+
   virtual void first(){}
   virtual void next(){}
-  virtual T currentItem(){}
-  virtual bool isDone(){}
+  virtual T currentItem() const {}
+  virtual bool isDone() const {}
+
+private:
+
 };
 
 // TODO
 template<typename T>
 class BFSIterator :public Iterator<T> {
 public:
+  BFSIterator(){}
+
   virtual void first(){}
   virtual void next(){}
-  virtual T currentItem(){}
-  virtual bool isDone(){}
+  virtual T currentItem() const {}
+  virtual bool isDone() const {}
+
+private:
+
 };
 
 #endif
