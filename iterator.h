@@ -94,7 +94,7 @@ public:
 
   virtual void first(){}
   virtual void next(){}
-  virtual T currentItem() const {}
+  virtual T currentItem() const { return testTerm; }
   virtual bool isDone() const {}
 
 private:
@@ -109,7 +109,7 @@ public:
 
   virtual void first(){}
   virtual void next(){}
-  virtual T currentItem() const {}
+  virtual T currentItem() const { return testTerm; }
   virtual bool isDone() const {}
 
 private:
