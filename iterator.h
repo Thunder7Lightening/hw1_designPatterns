@@ -5,6 +5,12 @@
 #include "struct.h"
 #include "list.h"
 
+#include <stack>
+#include <queue>
+#include <vector>
+#include <iostream>
+using namespace std;
+
 template<typename T>
 class Iterator {
 public:
@@ -13,6 +19,72 @@ public:
   virtual T currentItem() const = 0;
   virtual bool isDone() const = 0;
 };
+
+/**
+ * Implement the interface through your design,
+ * and do not modify the function signature of each.
+*/
+
+// TODO
+template<typename T>
+class BFSIterator :public Iterator<T> {
+public:
+  BFSIterator(T term): _index(0)
+  {
+    _traverseSequence.push_back(new Atom("test"));
+    _traverseSequence.push_back(new Atom("test"));
+  }
+
+  virtual void first()
+  {
+    _index = 0;
+  }
+
+  virtual void next()
+  {
+    _index++;
+  }
+
+  virtual T currentItem() const
+  {
+    return _traverseSequence.at(_index);
+  }
+
+  virtual bool isDone() const
+  {
+    return _index >= _traverseSequence.size();
+  }
+
+public:
+  int _index;
+  vector<T> _traverseSequence;
+};
+
+// TODO
+template<typename T>
+class DFSIterator :public Iterator<T> {
+public:
+  DFSIterator(Term *term):testTerm(term){}
+
+  virtual void first(){}
+  virtual void next(){}
+  virtual T currentItem() const { return testTerm; }
+  virtual bool isDone() const {}
+
+private:
+  Term *testTerm;
+};
+
+
+
+
+
+
+
+
+
+
+
 
 template<typename T>
 class NullIterator :public Iterator<T>{
@@ -79,41 +151,6 @@ public:
 private:
   int _index;
   List* _list;
-};
-
-/**
- * Implement the interface through your design,
- * and do not modify the function signature of each.
-*/
-
-// TODO
-template<typename T>
-class DFSIterator :public Iterator<T> {
-public:
-  DFSIterator(Term *term):testTerm(term){}
-
-  virtual void first(){}
-  virtual void next(){}
-  virtual T currentItem() const { return testTerm; }
-  virtual bool isDone() const {}
-
-private:
-  Term *testTerm;
-};
-
-// TODO
-template<typename T>
-class BFSIterator :public Iterator<T> {
-public:
-  BFSIterator(Term *term):testTerm(term){}
-
-  virtual void first(){}
-  virtual void next(){}
-  virtual T currentItem() const { return testTerm; }
-  virtual bool isDone() const {}
-
-private:
-  Term *testTerm;
 };
 
 #endif

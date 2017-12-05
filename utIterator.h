@@ -97,25 +97,29 @@ TEST(iterator, NullIterator){
 
 // Here are the 8 new Tests below
 // combo1(bigMac(bun, beefPatty), coke)
-// TEST(ITERATOR, BFSIteratorWithSimpleTestData)
-// {
-//   // create combo1(bigMac(bun, beefPatty), coke)
-//   Atom coke("coke");
-//   Atom bun("bun");
-//   Atom beefPatty("beefPatty");
-//   Struct bigMac(Atom("bigMac"), { &bun, &beefPatty });
-//   Struct combo1(Atom("combo1"), { &bigMac, &coke });
-//
-//   // iterate it by BSF
-//   Iterator<Term*> *it = combo1.createBFSIterator();
-//   it->first();
-//   ASSERT_TRUE("bigmac", it->currentItem());
-//   it->next();
-//   ASSERT_TRUE("coke", it->currentItem());
-//   it->next();
-//   ASSERT_TRUE("bun", it->currentItem());
-//   it->next();
-//   ASSERT_TRUE("beefPatty", it->currentItem());
-// }
+TEST(ITERATOR, BFS_simple_struct)
+{
+  // create combo1(bigMac(bun, beefPatty), coke)
+  Atom coke("coke");
+  Atom bun("bun");
+  Atom beefPatty("beefPatty");
+  Struct bigMac(Atom("bigMac"), { &bun, &beefPatty });
+  Struct combo1(Atom("combo1"), { &bigMac, &coke });
+
+  // iterate it by BSF
+  Iterator<Term*> *it = combo1.createBFSIterator();
+
+  ASSERT_EQ(2, dynamic_cast<BFSIterator<Term*> *>(it)->_traverseSequence.size());
+
+  // it->first();
+  // ASSERT_FALSE(it->isDone());
+  // ASSERT_EQ("bigMac(bun, beefPatty)", it->currentItem()->symbol());
+  // it->next();
+  // ASSERT_EQ("coke", it->currentItem()->symbol());
+  // it->next();
+  // ASSERT_EQ("bun", it->currentItem()->symbol());
+  // it->next();
+  // ASSERT_EQ("beefPatty", it->currentItem()->symbol());
+}
 
 #endif
