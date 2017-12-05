@@ -16,7 +16,7 @@ class Iterator {
 public:
   virtual void first() = 0;
   virtual void next() = 0;
-  virtual T currentItem() const = 0;
+  virtual Term *currentItem() const = 0;
   virtual bool isDone() const = 0;
 };
 
@@ -27,12 +27,38 @@ public:
 
 // TODO
 template<typename T>
-class BFSIterator :public Iterator<T> {
+class BFSIterator : public Iterator<T> {
 public:
   BFSIterator(T term): _index(0)
   {
-    _traverseSequence.push_back(new Atom("test"));
-    _traverseSequence.push_back(new Atom("test"));
+    queue<Iterator<T> *> myQueue;
+	Iterator<T> *it = term->createIterator();
+
+	myQueue.push(it);
+	while(!myQueue.empty())
+	{
+		it = myQueue.front();
+
+		_traverseSequence.push_back(it->currentItem());
+
+		Iterator<T> *itTmp = it->currentItem()->createIterator();
+		if(!itTmp->isDone())
+			myQueue.push(itTmp);
+
+		it->next();
+		while(!it->isDone())
+		{
+			_traverseSequence.push_back(it->currentItem());
+
+			Iterator<T> *itTmp = it->currentItem()->createIterator();
+			if(!itTmp->isDone())
+				myQueue.push(itTmp);
+
+			it->next();
+		}
+
+		myQueue.pop();
+	}
   }
 
   virtual void first()
@@ -45,7 +71,7 @@ public:
     _index++;
   }
 
-  virtual T currentItem() const
+  virtual Term *currentItem() const
   {
     return _traverseSequence.at(_index);
   }
@@ -64,15 +90,48 @@ public:
 template<typename T>
 class DFSIterator :public Iterator<T> {
 public:
-  DFSIterator(Term *term):testTerm(term){}
+  DFSIterator(Term *term)
+  {
+	createTraverseSequence(term);
+  }
 
-  virtual void first(){}
-  virtual void next(){}
-  virtual T currentItem() const { return testTerm; }
-  virtual bool isDone() const {}
+  // recursively DFS traverse term
+  void createTraverseSequence(Term *term)
+  {
+	Iterator<T> *it = term->createIterator();
+	
+	while(!it->isDone())
+	{
+		_traverseSequence.push_back(it->currentItem());
+		createTraverseSequence(it->currentItem());
 
-private:
-  Term *testTerm;
+		it->next();
+	}
+  }
+
+  virtual void first()
+  {
+	  _index = 0;
+  }
+
+  virtual void next()
+  {
+	  _index++;
+  }
+
+  virtual Term *currentItem() const 
+  { 
+	  return _traverseSequence.at(_index);
+  }
+
+  virtual bool isDone() const 
+  { 
+	  return _index >= _traverseSequence.size();
+  }
+
+public:
+  int _index;
+  vector<T> _traverseSequence;
 };
 
 
@@ -92,13 +151,12 @@ public:
   NullIterator(Term *n){}
   void first(){}
   void next(){}
-  T currentItem() const{
+  Term *currentItem() const{
       return nullptr;
   }
   bool isDone() const{
     return true;
   }
-
 };
 
 template<typename T>
@@ -110,7 +168,7 @@ public:
     _index = 0;
   }
 
-  T currentItem() const {
+  Term *currentItem() const {
     return _s->args(_index);
   }
 
@@ -137,7 +195,7 @@ public:
     _index = 0;
   }
 
-  T currentItem() const {
+  Term *currentItem() const {
     return _list->args(_index);
   }
 
