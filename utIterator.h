@@ -261,7 +261,7 @@ TEST(ITERATOR, BFS_simple_list2)
 }
 
 // combo1(bigMac(bun, beefPatty), coke, [fries1, fries2])
-TEST(ITERATOR, BFS_complex_struct3)
+TEST(ITERATOR, BFS_complex_struct_list)
 {
 	// create combo1(bigMac(bun, beefPatty), coke, [fries1, fries2])
 	Atom coke("coke");
@@ -422,27 +422,6 @@ TEST(ITERATOR, DFS_simple_struct)
 }
 
 // [fires1, fires2]
-TEST(ITERATOR, DFS_simple_list)
-{
-	// create [fires1, fires2]
-	Atom fires1("fires1");
-	Atom fires2("fires2");
-
-	vector<Term*> args;
-	args.push_back(&fires1);
-	args.push_back(&fires2);
-	List firesList(args);
-
-	// iterate it by BSF
-	Iterator<Term*> *it = firesList.createDFSIterator();
-	it->first();
-	EXPECT_EQ("fires1", it->currentItem()->symbol());
-	it->next();
-	EXPECT_EQ("fires2", it->currentItem()->symbol());
-	EXPECT_EQ(2, dynamic_cast<DFSIterator<Term*> *>(it)->_traverseSequence.size());
-}
-
-// [fires1, fires2]
 TEST(ITERATOR, DFS_simple_list1)
 {
 	// create [fires1, fires2]
@@ -501,7 +480,7 @@ TEST(ITERATOR, DFS_simple_list2)
 }
 
 //// combo1(bigMac(bun, beefPatty), coke, [fires1, fires2])
-TEST(ITERATOR, DFS_somplex_structList)
+TEST(ITERATOR, DFS_complex_struct_list)
 {
 	// create combo1(bigMac(bun, beefPatty), coke, [fires1, fires2])
 	Atom coke("coke");
