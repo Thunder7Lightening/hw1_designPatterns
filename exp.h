@@ -6,23 +6,33 @@
 class Exp {
 public:
   virtual bool evaluate() = 0;
-  virtual string getEvaluateString() {return "";}
+  virtual Exp* left() = 0;
+  virtual Exp* right() = 0;
+  virtual string getExpression() = 0;
 };
 
 
 class MatchExp : public Exp {
 public:
-  MatchExp(Term* left, Term* right): _left(left), _right(right){
-
-  }
+  MatchExp(Term* left, Term* right): _left(left), _right(right){}
 
   bool evaluate(){
     return _left->match(*_right);
   }
-  string getEvaluateString(){
-    return _left->symbol() + " = " + _right->value() ;
+
+  Exp* left() { return nullptr; }
+  Exp* right() { return nullptr; }
+
+  string getExpression()
+  {
+    string ret = "";
+    if(_left->symbol() == _right->value())
+      ret = "true";
+    else
+      ret = _left->symbol() + " = " + _right->value();
+    return ret;
   }
-  
+
 private:
   Term* _left;
   Term* _right;
@@ -30,16 +40,18 @@ private:
 
 class ConjExp : public Exp {
 public:
-  ConjExp(Exp *left, Exp *right) : _left(left), _right(right) {
-
-  }
+  ConjExp(Exp *left, Exp *right) : _left(left), _right(right) {}
 
   bool evaluate() {
     return (_left->evaluate() && _right->evaluate());
   }
 
-  string getEvaluateString(){
-    return (_left->getEvaluateString() + ", "+  _right->getEvaluateString());
+  Exp* left() { return _left; }
+  Exp* right() { return _right; }
+
+  string getExpression()
+  {
+    return  _left->getExpression() + ", " + _right->getExpression();
   }
 
 private:
@@ -49,12 +61,18 @@ private:
 
 class DisjExp : public Exp {
 public:
-  DisjExp(Exp *left, Exp *right) : _left(left), _right(right) {
-
-  }
+  DisjExp(Exp *left, Exp *right) : _left(left), _right(right) {}
 
   bool evaluate() {
     return (_left->evaluate() || _right->evaluate());
+  }
+
+  Exp* left() { return _left; }
+  Exp* right() { return _right; }
+
+  string getExpression()
+  {
+    return _left->getExpression() + "; " + _right->getExpression();
   }
 
 private:
