@@ -1,6 +1,5 @@
 #ifndef PARSER_H
 #define PARSER_H
-
 #include <string>
 using std::string;
 
@@ -11,9 +10,9 @@ using std::string;
 #include "struct.h"
 #include "list.h"
 #include "exp.h"
-#include "iterator.h"
 #include <stack>
-
+#include <map>
+using std::map;
 using std::stack;
 
 class Parser{
@@ -24,13 +23,17 @@ public:
     int token = _scanner.nextToken();
     _currentToken = token;
     if(token == VAR){
-      return new Variable(symtable[_scanner.tokenValue()].first);
+      if(_table.find(symtable[_scanner.tokenValue()].first) == _table.end() )
+        _table.insert(pair<string,Variable*>(symtable[_scanner.tokenValue()].first,new Variable(symtable[_scanner.tokenValue()].first)));
+      
+        return _table[symtable[_scanner.tokenValue()].first];
     }else if(token == NUMBER){
       return new Number(_scanner.tokenValue());
     }else if(token == ATOM || token == ATOMSC){
       Atom* atom = new Atom(symtable[_scanner.tokenValue()].first);
-      if(_scanner.currentChar() == '(' )
+      if(_scanner.currentChar() == '(' ) {
         return structure();
+      }
       else
         return atom;
     }
@@ -40,6 +43,8 @@ public:
 
     return nullptr;
   }
+
+
 
   Term * structure() {
     Atom structName = Atom(symtable[_scanner.tokenValue()].first);
@@ -105,6 +110,12 @@ public:
   void restConjunctionMatch() {
     if (_scanner.currentChar() == ',') {
       createTerm();
+
+    if(_scanner.currentChar() == '.')
+    {
+      throw string("Unexpected ',' before '.'");
+    }
+      
       conjunctionMatch();
       Exp *right = _expStack.top();
       _expStack.pop();
@@ -116,24 +127,25 @@ public:
   }
 
   void conjunctionMatch() {
-    if(_scanner.currentChar() == '.'){
-      throw string("Unexpected ',' before '.'");
-    }
+    
 
     Term * left = createTerm();
-    doWeNeedToLinkVarToVarFromStorage(left);
-
     if (createTerm() == nullptr && _currentToken == '=') {
       Term * right = createTerm();
-      doWeNeedToLinkVarToVarFromStorage(right);
       _expStack.push(new MatchExp(left, right));
-    }else if(_currentToken == ';'){
-      throw string("Unexpected ';' before '.'");
-    }else if(_currentToken == ','){
-      throw string("Unexpected ',' before '.'");
-    }else{
-      throw string("X does never get assignment");
     }
+    else if(_currentToken=='.')
+    {
+      throw string(left->symbol()+" does never get assignment");
+    }
+    else if(_currentToken != '=')
+    {
+      std::ostringstream strs;
+      strs << (char)_currentToken;
+      string _symbol = strs.str();
+      throw string ("Unexpected '"+_symbol+"' before '.'");
+    }
+    
   }
 
   Exp* getExpressionTree(){
@@ -158,63 +170,11 @@ private:
     }
   }
 
-  bool isVarExistInStorage(Variable* var)
-  {
-    // return linkToVarExistInStorage(var);
-    for(int i = 0; i < _varStorage.size(); i++)
-    {
-      if(_varStorage[i]->symbol() == var->symbol())
-        return true;
-    }
-    return false;
-  }
-
-  Variable* linkToVarExistInStorage(Variable* var)
-  {
-    for(int i = 0; i < _varStorage.size(); i++)
-    {
-      if(_varStorage[i]->symbol() == var->symbol())
-        return _varStorage[i];
-    }
-    return nullptr;
-  }
-
-  void doWeNeedToLinkVarToVarFromStorage(Term * &term)
-  {
-    // process pure var
-    checkAndLinkVar(term);
-
-    // process var in list
-    List* list = dynamic_cast<List*>(term);
-    if(list)
-    {
-      Iterator* it = list->createIterator();
-      for(it->first(); !it->isDone(); it->next())
-      {
-        Term* item = it->currentItem();
-        checkAndLinkVar(item);
-      }
-    }
-  }
-
-  void checkAndLinkVar(Term * &term)
-  {
-    Variable* var = dynamic_cast<Variable*>(term);
-    if(var)
-    {
-      if(isVarExistInStorage(var))
-        term = linkToVarExistInStorage(var);
-      else
-        _varStorage.push_back(var);
-      return;
-    }
-  }
-
   vector<Term *> _terms;
   Scanner _scanner;
   int _currentToken;
   //MatchExp* _root;
   stack<Exp*> _expStack;
-  vector<Variable*> _varStorage;
+  map<string,Variable*> _table;
 };
 #endif

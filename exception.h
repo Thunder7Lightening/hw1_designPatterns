@@ -1,15 +1,20 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
-
-#include "scanner.h"
-#include "parser.h"
-
 /**
- *
+ * 
  * Here are some examples for exception handling,
  * the actual testing way is base on your implementation.
- *
+ * 
  */
+
+#include "atom.h"
+#include "variable.h"
+#include "global.h"
+#include "scanner.h"
+#include "struct.h"
+#include "list.h"
+#include "exp.h"
+#include "parser.h"
 
 TEST(Shell, exception_OnlyVariable) {
   Scanner s("X."); // this is our wrong expression.
@@ -22,7 +27,7 @@ TEST(Shell, exception_OnlyVariable) {
   }
 }
 
-TEST(Shell, exceptionMissingPeriodToken2) {
+TEST(Shell, exceptionMissingPeriodToken) {
   Scanner s("X=1");
   Parser p(s);
   try {
