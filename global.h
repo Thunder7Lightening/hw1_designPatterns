@@ -17,12 +17,6 @@ const int ATOM = 257;
 const int ATOMSC = 258;
 const int VAR = 259;
 
-// for expressionTree's payload
-// const int TERM = 260;
-// const int EQUALITY = 261;
-// const int COMMA = 262;
-// const int SEMICOLON = 263;
-
 #include <vector>
 using std::vector;
 

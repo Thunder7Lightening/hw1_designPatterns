@@ -9,19 +9,24 @@ using std::string;
 #include "scanner.h"
 #include "struct.h"
 #include "list.h"
-#include "node.h"
-
-#include "utParser.h"
+#include "exp.h"
+#include <stack>
+#include <map>
+using std::map;
+using std::stack;
 
 class Parser{
 public:
-  Parser(Scanner scanner) : _scanner(scanner), _terms(){}
+  Parser(Scanner scanner) : _scanner(scanner), _terms() {}
 
   Term* createTerm(){
     int token = _scanner.nextToken();
     _currentToken = token;
     if(token == VAR){
-      return new Variable(symtable[_scanner.tokenValue()].first);
+      if(_table.find(symtable[_scanner.tokenValue()].first) == _table.end() )
+        _table.insert(pair<string,Variable*>(symtable[_scanner.tokenValue()].first,new Variable(symtable[_scanner.tokenValue()].first)));
+      
+        return _table[symtable[_scanner.tokenValue()].first];
     }else if(token == NUMBER){
       return new Number(_scanner.tokenValue());
     }else if(token == ATOM || token == ATOMSC){
@@ -52,7 +57,7 @@ public:
       _terms.erase(_terms.begin() + startIndexOfStructArgs, _terms.end());
       return new Struct(structName, args);
     } else {
-      throw string("unexpected token");
+      throw string("Unbalanced operator");
     }
   }
 
@@ -63,9 +68,12 @@ public:
     {
       vector<Term *> args(_terms.begin() + startIndexOfListArgs, _terms.end());
       _terms.erase(_terms.begin() + startIndexOfListArgs, _terms.end());
+      if(args.size()==0){
+        return new Atom("[]");
+      }
       return new List(args);
     } else {
-      throw string("unexpected token");
+      throw string("Unbalanced operator");
     }
   }
 
@@ -73,153 +81,75 @@ public:
     return _terms;
   }
 
-  // TODO
-  void replaceVariableArgsInTermIfAlreadyExistedIn_terms(Struct *structTerm)
-  {
-    Struct *argStructTerm;
-    Variable *argVariableTerm;
-    Term *oldTerm;
+  void buildExpression(){
+    // createTerm();
+    disjunctionMatch();
+    restDisjunctionMatch();
+    if (createTerm() != nullptr || _currentToken != '.')
+      throw string("Missing token '.'");
+  }
 
-    for(int i = 0; i < structTerm->arity(); i++)
-    {
-      if(argStructTerm = dynamic_cast<Struct *>(structTerm->args(i)))
-      {
-        replaceVariableArgsInTermIfAlreadyExistedIn_terms(argStructTerm);
-      }
-      else if(argVariableTerm = dynamic_cast<Variable *>(structTerm->args(i)))
-      {
-        if(oldTerm = existTermIn_terms(argVariableTerm))
-        {
-          structTerm->_args[i] = oldTerm;
-        }
-      }
+  void restDisjunctionMatch() {
+    if (_scanner.currentChar() == ';') {
+      createTerm();
+      disjunctionMatch();
+      Exp *right = _expStack.top();
+      _expStack.pop();
+      Exp *left = _expStack.top();
+      _expStack.pop();
+      _expStack.push(new DisjExp(left, right));
+      restDisjunctionMatch();
     }
   }
 
-  // TODO
-  Term *existTermIn_terms(Term *term)
-  {
-    Struct *structTerm;
-
-    if(structTerm = dynamic_cast<Struct *>(term))
-    {
-      // TODO
-      replaceVariableArgsInTermIfAlreadyExistedIn_terms(structTerm);
-    }
-
-    for(int i = _terms.size() - 1; i >= 0; i--)
-    {
-      // 檢查看看_terms裡面是否曾出現term
-      if(term->symbol() == _terms[i]->symbol())
-        return _terms[i];
-
-      // TODO check is term already existed in structure args
-      if(structTerm = dynamic_cast<Struct *>(_terms[i]))
-      {
-        // TODO 若_terms[i]為Struct，找args裡面是否曾出現term
-        for(int i = 0; i < structTerm->arity(); i++)
-        {
-          if(term->symbol() == structTerm->args(i)->symbol())
-            return structTerm->args(i);
-        }
-      }
-    }
-
-    return nullptr;
+  void disjunctionMatch() {
+    conjunctionMatch();
+    restConjunctionMatch();
   }
 
-  // TODO if term has already existed in _terms then points to the existed term
-  Node *addTermTo_termsAndReturnTermNode(Term *term)
-  {
-    Term *oldTerm;
-    if((oldTerm = existTermIn_terms(term)) == nullptr)
+  void restConjunctionMatch() {
+    if (_scanner.currentChar() == ',') {
+      createTerm();
+
+    if(_scanner.currentChar() == '.')
     {
-      _terms.push_back(term);
-      return new Node(TERM, term);
+      throw string("Unexpected ',' before '.'");
     }
-    else
-    {
-      _terms.push_back(oldTerm);
-      return new Node(TERM, oldTerm);
+      
+      conjunctionMatch();
+      Exp *right = _expStack.top();
+      _expStack.pop();
+      Exp *left = _expStack.top();
+      _expStack.pop();
+      _expStack.push(new ConjExp(left, right));
+      restConjunctionMatch();
     }
   }
 
-  void matching()
-  {
-    if(_currentToken == ';')
-    {
-      Term* term = createTerm();
-      if(term!=nullptr)
-      {
-        // Node *termNode1 = addTermTo_termsAndReturnTermNode(term);
-        _terms.push_back(term);
-        Node *termNode1 = new Node(TERM, term);
+  void conjunctionMatch() {
+    
 
-        if((_currentToken = _scanner.nextToken()) == '=')
-        {
-          term = createTerm();
-          // Node *termNode2 = addTermTo_termsAndReturnTermNode(term);
-          _terms.push_back(term);
-          Node *termNode2 = new Node(TERM, term);
-
-          Node *operatorNode = new Node(EQUALITY);
-          operatorNode->left = termNode1;
-          operatorNode->right = termNode2;
-
-          _et = operatorNode;
-        }
-      }
+    Term * left = createTerm();
+    if (createTerm() == nullptr && _currentToken == '=') {
+      Term * right = createTerm();
+      _expStack.push(new MatchExp(left, right));
     }
-    else
+    else if(_currentToken=='.')
     {
-      Term* term = createTerm();
-      if(term!=nullptr)
-      {
-        Node *termNode1 = addTermTo_termsAndReturnTermNode(term);
-
-        if((_currentToken = _scanner.nextToken()) == '=')
-        {
-          term = createTerm();
-          Node *termNode2 = addTermTo_termsAndReturnTermNode(term);
-
-          Node *operatorNode = new Node(EQUALITY);
-          operatorNode->left = termNode1;
-          operatorNode->right = termNode2;
-
-          _et = operatorNode;
-        }
-      }
+      throw string(left->symbol()+" does never get assignment");
     }
+    else if(_currentToken != '=')
+    {
+      std::ostringstream strs;
+      strs << (char)_currentToken;
+      string _symbol = strs.str();
+      throw string ("Unexpected '"+_symbol+"' before '.'");
+    }
+    
   }
 
-  void matchings()
-  {
-    this->matching();
-    _scanner.skipLeadingWhiteSpace();
-    if(_scanner.currentChar() != '.') // _currentToken != '.'
-    {
-      _currentToken = _scanner.nextToken(); // eat up ',' | ';'
-
-      Node *operatorNode;
-      switch(_currentToken)
-      {
-        case ',':
-          operatorNode = new Node(COMMA);
-          break;
-        case ';':
-          operatorNode = new Node(SEMICOLON);
-          break;
-      }
-      operatorNode->left = _et;
-      this->matchings();
-      operatorNode->right = _et;
-      _et = operatorNode;
-    }
-  }
-
-  Node *expressionTree()
-  {
-    return _et;
+  Exp* getExpressionTree(){
+    return _expStack.top();
   }
 
 private:
@@ -227,6 +157,7 @@ private:
   FRIEND_TEST(ParserTest,ListOfTermsEmpty);
   FRIEND_TEST(ParserTest,listofTermsTwoNumber);
   FRIEND_TEST(ParserTest, createTerm_nestedStruct3);
+  FRIEND_TEST(ParserTest, createTerms);
 
   void createTerms() {
     Term* term = createTerm();
@@ -239,9 +170,11 @@ private:
     }
   }
 
-  Node *_et;
   vector<Term *> _terms;
   Scanner _scanner;
   int _currentToken;
+  //MatchExp* _root;
+  stack<Exp*> _expStack;
+  map<string,Variable*> _table;
 };
 #endif

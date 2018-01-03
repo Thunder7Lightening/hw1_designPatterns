@@ -5,24 +5,23 @@
 #include <sstream>
 using std::string;
 
-template<typename T>
+class Variable;
+class Struct;
 class Iterator;
-
-class Term{
+class Term {
 public:
   virtual string symbol() const {return _symbol;}
   virtual string value() const {return symbol();}
   virtual bool match(Term & a);
-  virtual Iterator<Term *> * createIterator();
-
-protected:
-  Term ():_symbol(""){}
-  Term (string s):_symbol(s) {}
-  Term(double db){
-    std::ostringstream strs;
-    strs << db;
-    _symbol = strs.str();
+  virtual Iterator * createIterator();
+  virtual Struct* getStruct() {
+    return nullptr;
   }
+  virtual Variable* getVariable() {
+    return nullptr;
+  }
+protected:
+  Term (string s = ""):_symbol(s) {}
   string _symbol;
 };
 
@@ -33,7 +32,11 @@ public:
 
 class Number : public Term{
 public:
-  Number(double db):Term(db) {}
+  Number(double db){
+      std::ostringstream strs;
+      strs << db;
+      _symbol = strs.str();
+  }
 };
 
 #endif
